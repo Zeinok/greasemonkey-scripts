@@ -5,18 +5,36 @@
 // @description:zh-TW 把全站天公會入口按鈕帶回來
 // @namespace         https://greasyfork.org/users/43801
 // @author            ycl <https://greasyfork.org/users/43801>
-// @version           3
+// @version           4
 // @grant             none
 // @match             *://*.gamer.com.tw/*
 // @run-at            document-end
 // ==/UserScript==
 
 // init
-window.addEventListener('load', function() {
-  getButtonList().insertBefore(createGuildButton(showTopBarMsg), getButtonList().childNodes[0]);
-  console.log('Done adding guild button');
+let initialized = false;
 
-})
+let observer = new MutationObserver(observerCallback);
+observerArgs = {
+  childList: true,
+  attributes: false,
+  subtree: true
+}
+observer.observe(document, observerArgs)
+
+function observerCallback(mutationList, observer){
+  if(initialized) return;
+  for(let mutation of mutationList){
+    for(let node of mutation.addedNodes){
+      if(node instanceof Element){
+        if(node.classList.contains('TOP-my')){
+          getButtonList().insertBefore(createGuildButton(showTopBarMsg), getButtonList().childNodes[0]);
+          initialized = true;
+        }
+      }
+    }
+  }
+}
 
 let guildTopBarClicked = false;
 
@@ -30,7 +48,6 @@ async function showTopBarMsg(e){
       await fetchGuildListDOMNodes()
       )
     );
-
 }
 
 function getGuildTopBar(){
