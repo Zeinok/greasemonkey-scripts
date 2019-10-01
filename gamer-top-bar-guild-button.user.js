@@ -5,48 +5,128 @@
 // @description:zh-TW 把全站天公會入口按鈕帶回來
 // @namespace         https://greasyfork.org/users/43801
 // @author            ycl <https://greasyfork.org/users/43801>
-// @version           2
+// @version           3
 // @grant             none
 // @match             *://*.gamer.com.tw/*
 // @run-at            document-end
 // ==/UserScript==
 
-guildTopBarClicked = false;
+// init
+window.addEventListener('load', function() {
+  getButtonList().insertBefore(createGuildButton(showTopBarMsg), getButtonList().childNodes[0]);
+  console.log('Done adding guild button');
 
-function showTopBarMsg(){
-  //BH-top-data
-  
+})
+
+let guildTopBarClicked = false;
+
+async function showTopBarMsg(e){
   if(guildTopBarClicked)
     return;
-  var guildTopBar = document.getElementById('topBarMsg_guild');
-  guildTopBar.classList.add('TOP-msg');
-  var title = document.createElement('span');
-  title.innerText = '公會社團';
-  guildTopBar.appendChild(title);
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', 'https://api.gamer.com.tw/ajax/common/topBar.php?type=guild', true);
-  xhr.withCredentials = true;
-  //xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  xhr.onload = function (){
-    if(xhr.readyState == 4 && xhr.status == 200){
-      console.log('dled')
-      guildTopBarClicked = true;
-      //<div class="TOP-msglist TOP-board" id="topBarMsgList_forum">
-      
-      var guildTopBarList = document.createElement('div');
-      guildTopBarList.classList.add('TOP-msglist');
-      guildTopBarList.innerHTML = xhr.responseText;
-      console.log(xhr.responseText);
-      guildTopBar.appendChild(guildTopBarList);
-    }
-  }
-  xhr.send(null);
+  guildTopBarClicked = true;
+  initGuildMsgList();
+  getGuildTopBar().appendChild(
+    createGuildTopBarList(
+      await fetchGuildListDOMNodes()
+      )
+    );
+
 }
 
-window.addEventListener('load', function() {
-  var topBar = document.getElementById('BH-top-data');
-  var top_my = document.getElementsByClassName('TOP-my')[0];
-  var unorderedList = top_my.getElementsByTagName('ul')[0];
+function getGuildTopBar(){
+  return document.getElementById('topBarMsg_guild');
+}
+
+function initGuildMsgList(){
+  getGuildTopBar().classList.add('TOP-msg');
+  let title = document.createElement('span');
+  title.innerText = '公會社團';
+  getGuildTopBar().appendChild(title);
+}
+
+function createGuildTopBarList(nodes){
+  let guildTopBarList = document.createElement('div');
+  guildTopBarList.classList.add('TOP-msglist');
+  for(let node of nodes){
+    if(node instanceof Element){
+      let r = getEntryInfo(node);
+      guildTopBarList.appendChild(createGuildListEntry(r.url, r.img, r.name));
+    }
+
+  }
+  return guildTopBarList;
+}
+
+function getEntryInfo(element){
+  let url = element.getElementsByTagName('a')[0].href
+  let img = element.getElementsByTagName('a')[0].firstChild.src
+  let name = element.getElementsByTagName('a')[1].innerText;
+  return {
+    'url': url,
+    'img': img,
+    'name': name
+  };
+}
+
+function createGuildListEntry(url, img, name){
+  //<div>
+  let entry = document.createElement('div');
+  { //<a>
+    let link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    { //<span class='TOP-msgpic'>
+      let toppic = document.createElement('span');
+      toppic.classList.add('TOP-msgpic');
+      { //<img>
+        let pic = document.createElement('img');
+        pic.src = img;
+        toppic.appendChild(pic);
+      }
+      link.appendChild(toppic);
+    }
+    { //<span class='msgname'>
+      let msgname = document.createElement('span');
+      msgname.classList.add('msgname');
+      msgname.innerText = name;
+      link.appendChild(msgname);
+    }
+    entry.appendChild(link);
+  }
+  return entry;
+}
+
+async function fetchGuildListDOMNodes(){
+  const resp = await fetch(
+    'https://api.gamer.com.tw/ajax/common/topBar.php?type=guild',
+    {credentials: 'include'}
+  );
+  const parser = new DOMParser();
+  const dom = parser.parseFromString(await resp.text(), 'text/html');
+  return dom.body.childNodes;
+}
+
+function fetchGuildListDOMM(){
+  fetch('https://api.gamer.com.tw/ajax/common/topBar.php?type=guild',
+  {credentials: 'include'})
+    .then(resp => resp.text())
+    .then( text => {
+      const parser = new DOMParser();
+      const dom = parser.parseFromString(text, 'text/html');
+      return dom.getRootNode();
+    }
+  )
+}
+
+function getTopBar(){
+  return document.getElementById('BH-top-data');
+}
+
+function getButtonList(){
+  return document.getElementsByClassName('TOP-my')[0].getElementsByTagName('ul')[0];
+}
+
+function createGuildButton(onclickCallbackFunc){
   var guildButton = document.createElement('li');
   var guildLink = document.createElement('a');
   guildLink.id = 'topBar_guild';
@@ -65,8 +145,6 @@ window.addEventListener('load', function() {
   guildIcon.attributes.setNamedItem(srcAtt);
   guildLink.appendChild(guildIcon);
   guildButton.appendChild(guildLink);
-  unorderedList.insertBefore(guildButton, unorderedList.childNodes[0]);
-  guildButton.addEventListener('click', showTopBarMsg);
-  console.log('Done adding guild button');
-
-})
+  guildButton.addEventListener('click', onclickCallbackFunc);
+  return guildButton
+}
