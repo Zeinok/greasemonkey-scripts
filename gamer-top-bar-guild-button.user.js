@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name              Bahamut Top Bar Guild Button
-// @name:zh-TW        全站天公會入口按鈕
+// @name:zh-TW        巴哈全站天公會入口按鈕
 // @description       Restore Top Bar Guild button on gamer.com.tw
 // @description:zh-TW 把全站天公會入口按鈕帶回來
 // @namespace         https://greasyfork.org/users/43801
 // @author            ycl <https://greasyfork.org/users/43801>
-// @version           4
+// @version           5
 // @grant             none
 // @match             *://*.gamer.com.tw/*
 // @run-at            document-end
@@ -163,5 +163,6 @@ function createGuildButton(onclickCallbackFunc){
   guildLink.appendChild(guildIcon);
   guildButton.appendChild(guildLink);
   guildButton.addEventListener('click', onclickCallbackFunc);
+  guildButton.classList.add('mobilehide');
   return guildButton
 }
