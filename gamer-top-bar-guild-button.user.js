@@ -8,7 +8,7 @@
 // @version           5
 // @grant             none
 // @match             *://*.gamer.com.tw/*
-// @run-at            document-end
+// @run-at            document-start
 // ==/UserScript==
 
 // init
