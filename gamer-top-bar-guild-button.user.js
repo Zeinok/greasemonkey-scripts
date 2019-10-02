@@ -5,7 +5,7 @@
 // @description:zh-TW 把全站天公會入口按鈕帶回來
 // @namespace         https://greasyfork.org/users/43801
 // @author            ycl <https://greasyfork.org/users/43801>
-// @version           5
+// @version           6
 // @grant             none
 // @match             *://*.gamer.com.tw/*
 // @run-at            document-start
