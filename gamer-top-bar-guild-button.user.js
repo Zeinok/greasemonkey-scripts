@@ -5,7 +5,7 @@
 // @description:zh-TW 把全站天公會入口按鈕帶回來
 // @namespace         https://greasyfork.org/users/43801
 // @author            ycl <https://greasyfork.org/users/43801>
-// @version           6
+// @version           7
 // @grant             none
 // @match             *://*.gamer.com.tw/*
 // @run-at            document-start
@@ -20,7 +20,8 @@ observerArgs = {
   attributes: false,
   subtree: true
 }
-observer.observe(document, observerArgs)
+if(document.cookie.includes("BAHAID="))
+  observer.observe(document, observerArgs)
 
 function observerCallback(mutationList, observer){
   if(initialized) return;
