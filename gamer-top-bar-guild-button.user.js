@@ -124,18 +124,6 @@ async function fetchGuildListDOMNodes(){
   return dom.body.childNodes;
 }
 
-function fetchGuildListDOMM(){
-  fetch('https://api.gamer.com.tw/ajax/common/topBar.php?type=guild',
-  {credentials: 'include'})
-    .then(resp => resp.text())
-    .then( text => {
-      const parser = new DOMParser();
-      const dom = parser.parseFromString(text, 'text/html');
-      return dom.getRootNode();
-    }
-  )
-}
-
 function getTopBar(){
   return document.getElementById('BH-top-data');
 }
