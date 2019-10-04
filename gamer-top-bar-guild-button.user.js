@@ -145,20 +145,20 @@ function getButtonList(){
 }
 
 function createGuildButton(onclickCallbackFunc){
-  var guildButton = document.createElement('li');
-  var guildLink = document.createElement('a');
+  let guildButton = document.createElement('li');
+  let guildLink = document.createElement('a');
   guildLink.id = 'topBar_guild';
   if(window.location.host=="www.gamer.com.tw"){
     guildLink.classList.add('topbtn3');
   }
-  var hrefAtt = document.createAttribute('href');
+  let hrefAtt = document.createAttribute('href');
   hrefAtt.value = "javascript:TOPBAR_show('guild', '')";
   if(window.location.host=="www.gamer.com.tw"){
     hrefAtt.value = "javascript:TOPBAR_show('guild', 'topbtn3', 'topbtn3now')";
   }
   guildLink.attributes.setNamedItem(hrefAtt);
-  var guildIcon = document.createElement('img');
-  var srcAtt = document.createAttribute('src');
+  let guildIcon = document.createElement('img');
+  let srcAtt = document.createAttribute('src');
   srcAtt.value = 'https://i2.bahamut.com.tw/top_icon1.png';
   guildIcon.attributes.setNamedItem(srcAtt);
   guildLink.appendChild(guildIcon);
