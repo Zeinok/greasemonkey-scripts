@@ -20,6 +20,7 @@ observerArgs = {
   attributes: false,
   subtree: true
 }
+
 if(document.cookie.includes("BAHAID="))
   observer.observe(document, observerArgs)
 
@@ -29,7 +30,7 @@ function observerCallback(mutationList, observer){
     for(let node of mutation.addedNodes){
       if(node instanceof Element){
         if(node.classList.contains('TOP-my')){
-          getButtonList().insertBefore(createGuildButton(showTopBarMsg), getButtonList().childNodes[0]);
+          getButtonList().insertBefore(createGuildButton(showTopBarMsg), getButtonList().firstChild);
           initialized = true;
         }
       }
@@ -43,23 +44,16 @@ async function showTopBarMsg(e){
   if(guildTopBarClicked)
     return;
   guildTopBarClicked = true;
-  initGuildMsgList();
   getGuildTopBar().appendChild(
     createGuildTopBarList(
       await fetchGuildListDOMNodes()
       )
     );
+  prependGuildMsgListTitle();
 }
 
 function getGuildTopBar(){
   return document.getElementById('topBarMsg_guild');
-}
-
-function initGuildMsgList(){
-  getGuildTopBar().classList.add('TOP-msg');
-  let title = document.createElement('span');
-  title.innerText = '公會社團';
-  getGuildTopBar().appendChild(title);
 }
 
 function createGuildTopBarList(nodes){
@@ -70,9 +64,15 @@ function createGuildTopBarList(nodes){
       let r = getEntryInfo(node);
       guildTopBarList.appendChild(createGuildListEntry(r.url, r.img, r.name));
     }
-
   }
   return guildTopBarList;
+}
+
+function prependGuildMsgListTitle(){
+  getGuildTopBar().classList.add('TOP-msg');
+  let title = document.createElement('span');
+  title.innerText = '公會社團';
+  getGuildTopBar().insertBefore(title, getGuildTopBar().firstChild);
 }
 
 function getEntryInfo(element){
