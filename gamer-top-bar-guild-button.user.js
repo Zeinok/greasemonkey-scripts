@@ -29,9 +29,9 @@ function observerCallback(mutationList, observer){
   for(let mutation of mutationList){
     for(let node of mutation.addedNodes){
       if(node instanceof Element){
-        if(node.classList.contains('TOP-my')){
-          getButtonList().insertBefore(createGuildButton(showTopBarMsg), getButtonList().firstChild);
+        if(node.classList.contains('TOP-btn')){
           initialized = true;
+          getButtonList().insertBefore(createGuildButton(showTopBarMsg), getButtonList().firstChild);
         }
       }
     }
