@@ -5,8 +5,9 @@
 // @match       *://youtube.com/watch
 // @match       *://*.youtube.com/watch
 // @match       *://youtu.be/
+// @run-at      document-start
 // @grant       none
-// @version     1.0
+// @version     1.01
 // @author      Zeinok
 // ==/UserScript==
 
